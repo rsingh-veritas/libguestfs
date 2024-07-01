@@ -22,6 +22,8 @@ mount -t proc /proc /proc
 mount -t sysfs /sys /sys
 # devtmpfs is required since udev 176
 mount -t devtmpfs /dev /dev
+# Create dev directory for all VxVM device files.
+mkdir -p /dev/vx
 ln -s /proc/self/fd /dev/fd
 
 # Parse the kernel command line early (must be after /proc is mounted).
@@ -208,6 +210,45 @@ if false; then
     echo quit               >> /tmp/gdb-script
     cmd="gdb -batch -x /tmp/gdb-script --args $cmd"
 fi
+
+# Veritas VxFS support requires starting of a few specific services to bring
+# the VxFS filesystem and VxVM volume manager up and running within appliance.
+VXFS_STARTUP_DIR="/etc/vx"
+
+# Check if the VxFS/VxVM related startup script directory exists
+if [ -d "$VXFS_STARTUP_DIR" ]; then
+
+    mkdir -p /etc/vx/log/
+    touch /etc/vx/log/cmdlog
+
+    vxfs_startup() {
+        vxfs_exec_path=$1
+        vxfs_cmd=$2
+        # check if the script or bin file exists
+        [ -x "$vxfs_exec_path" ] &&  $vxfs_exec_path $vxfs_cmd
+        if [ $? -ne 0 ]; then
+            echo "Error: $vxfs_exec_path execution failed or file not found."
+            cmd=exit
+        fi
+    }
+
+    # Setup the license within the appliance.
+    vxfs_startup /usr/sbin/vxkeyless "--quiet set ENTERPRISE";
+    # Start Veki service.
+    vxfs_startup $VXFS_STARTUP_DIR/veki start;
+    # Start VxFS service.
+    vxfs_startup $VXFS_STARTUP_DIR/vxfs start;
+    # Start VxVM related services.
+    vxfs_startup $VXFS_STARTUP_DIR/vxvm-startup;
+    # Trigger vxdctl init to generate volboot file
+    vxfs_startup /usr/sbin/vxdctl init;
+    # Enabling this would allow us to use VxVM related commands
+    vxfs_startup /usr/sbin/vxdctl enable;
+else
+    echo "VxFS/VxVM script directory '$VXFS_STARTUP_DIR' does not exist."
+    cmd=exit
+fi
+
 if ! test "$guestfs_rescue" = 1; then
     echo $cmd
     $cmd

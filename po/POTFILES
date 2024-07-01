@@ -145,6 +145,7 @@ daemon/uuids.c
 daemon/wc.c
 daemon/xattr.c
 daemon/xfs.c
+daemon/vxfs.c
 daemon/yara.c
 daemon/zero.c
 daemon/zerofree.c

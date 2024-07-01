@@ -297,5 +297,13 @@ exfat-utils
 exfatprogs
 fuse-exfat
 
+dnl Proprietary Veritas packages for VxFS support
+dnl VRTSperl
+dnl VRTSpython
+VRTSveki
+VRTSvlic
+VRTSvxfs
+VRTSvxvm
+
 dnl Define this by doing: ./configure --with-extra-packages="..."
 EXTRA_PACKAGES

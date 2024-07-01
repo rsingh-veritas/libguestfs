@@ -27,6 +27,7 @@ open Std_utils
 let rec list_filesystems () =
   let has_lvm2 = Optgroups.lvm2_available () in
   let has_ldm = Optgroups.ldm_available () in
+  let has_vxvm = Optgroups.vxvm_available () in
 
   let ret = ref [] in
 
@@ -52,6 +53,12 @@ let rec list_filesystems () =
   let mds = Md.list_md_devices () in
   let mds = List.filter is_not_partitioned_device mds in
   List.iter (check_with_vfs_type ret) mds;
+
+  (* VxVM. *)
+  if has_vxvm then (
+    let vxvm_vol = List_vxvm.list_vxvm () in
+    List.iter (check_with_vxvmvol_type ret) vxvm_vol
+  );
 
   (* LVM. *)
   if has_lvm2 then (
@@ -193,3 +200,9 @@ and check_with_vfs_type ret device =
 
   else
     List.push_back ret (mountable, vfs_type)
+
+(* Check for the vxvm volume type *)
+and check_with_vxvmvol_type ret device =
+  let mountable = Mountable.of_device device in
+  let vxvmvol_typ = Vxvm_type.vxvmvol_type mountable in
+  List.push_back ret (mountable, vxvmvol_typ)

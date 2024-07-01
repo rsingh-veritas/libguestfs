@@ -51,6 +51,8 @@ generator_built = \
 	link.mli \
 	listfs.mli \
 	lvm.mli \
+	list_vxvm.mli \
+	vxvm_type.mli \
 	lvm_dm.mli \
 	md.mli \
 	mount.mli \
@@ -210,6 +212,7 @@ guestfsd_SOURCES = \
 	wc.c \
 	xattr.c \
 	xfs.c \
+	vxfs.c \
 	yara.c \
 	zero.c \
 	zerofree.c
@@ -295,6 +298,7 @@ SOURCES_MLI = \
 	isoinfo.mli \
 	ldm.mli \
 	link.mli \
+	list_vxvm.mli \
 	listfs.mli \
 	lvm.mli \
 	lvm_dm.mli \
@@ -311,7 +315,8 @@ SOURCES_MLI = \
 	statvfs.mli \
 	structs.mli \
 	sysroot.mli \
-	utils.mli
+	utils.mli \
+	vxvm_type.mli
 
 SOURCES_ML = \
 	$(CONFIGURE_GENERATED_ML) \
@@ -333,6 +338,8 @@ SOURCES_ML = \
 	ldm.ml \
 	link.ml \
 	lvm.ml \
+	list_vxvm.ml \
+	vxvm_type.ml \
 	lvm_utils.ml \
 	lvm_dm.ml \
 	findfs.ml \

@@ -1792,6 +1792,30 @@ This returns a list of the logical volume device names
 
 See also C<guestfs_lvs_full>, C<guestfs_list_filesystems>." };
 
+{ defaults with
+    name = "list_vxvm"; added = (0, 0, 1);
+    style = RStringList (RDevice, "logvols"), [], [];
+    impl = OCaml "List_vxvm.list_vxvm";
+    optional = Some "vxvm";
+    shortdesc = "list the VxVM volumes (vxvm)";
+    longdesc = "\
+List all the VxVM volumes detected.  This is the equivalent
+of the L<vxdisk list> command.
+
+This returns a list of the VxVM volume device names
+(eg. F</dev/vx/dsk/DiskGroup/Volume>).
+
+See also C<guestfs_list_filesystems>." };
+
+{ defaults with
+    name = "vxvmvol_type"; added = (0, 0, 1);
+    style = RString (RPlainString, "fstype"), [String (Mountable, "mountable")], [];
+    impl = OCaml "Vxvm_type.vxvmvol_type";
+    shortdesc = "get the VxVM Volume type corresponding to a mounted device";
+    longdesc = "\
+This command returns the filesystem type corresponding to
+the filesystem on C<mountable>." };
+
   { defaults with
     name = "pvs_full"; added = (0, 0, 4);
     style = RStructList ("physvols", "lvm_pv"), [], [];
